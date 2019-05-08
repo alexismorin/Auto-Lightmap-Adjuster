@@ -1,0 +1,23 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "AutoLightmapAdjuster",
+	"Description": "Automatically adjust lightmap scale for static meshes in your scene ",
+	"Category": "Other",
+	"CreatedBy": "Alexis Morin",
+	"CreatedByURL": "github.com/alexismorin/",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "AutoLightmapAdjuster",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
