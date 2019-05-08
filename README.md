@@ -1,0 +1,1 @@
+# Auto-Lightmap-Adjuster
