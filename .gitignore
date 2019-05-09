@@ -12,8 +12,6 @@
 *.pch
 
 # Compiled Dynamic libraries
-*.so
-*.dylib
 
 # Fortran module files
 *.mod
@@ -49,9 +47,6 @@ SourceArt/**/*.tga
 Build/*
 
 # Whitelist PakBlacklist-<BuildConfiguration>.txt files
-!Build/*/
-Build/*/**
-!Build/*/PakBlacklist*.txt
 
 # Don't ignore icon files in Build
 !Build/**/*.ico
@@ -66,15 +61,6 @@ Saved/*
 
 
 # Cache files for the editor to use
-DerivedDataCache/*
-
-
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-Assets/AssetStoreTools*
 
 # Visual Studio cache directory
 .vs/
