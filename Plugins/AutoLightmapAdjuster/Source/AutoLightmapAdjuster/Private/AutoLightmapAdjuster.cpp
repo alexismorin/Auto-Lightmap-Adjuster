@@ -6,7 +6,6 @@
 #include "Misc/MessageDialog.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "EngineUtils.h"
-#include "Object.h"
 
 #include "LevelEditor.h"
 
@@ -15,32 +14,25 @@ static const FName AutoLightmapAdjusterTabName("AutoLightmapAdjuster");
 #define LOCTEXT_NAMESPACE "FAutoLightmapAdjusterModule"
 
 void FAutoLightmapAdjusterModule::StartupModule()
-{
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-	
+{	
 	FAutoLightmapAdjusterStyle::Initialize();
 	FAutoLightmapAdjusterStyle::ReloadTextures();
 
 	FAutoLightmapAdjusterCommands::Register();
 	
-
-
 	PluginCommandsLow = MakeShareable(new FUICommandList);
-
 	PluginCommandsLow->MapAction(
 		FAutoLightmapAdjusterCommands::Get().PluginActionLow,
 		FExecuteAction::CreateRaw(this, &FAutoLightmapAdjusterModule::generateLow),
 		FCanExecuteAction());
 
 	PluginCommandsMedium = MakeShareable(new FUICommandList);
-
 	PluginCommandsMedium->MapAction(
 		FAutoLightmapAdjusterCommands::Get().PluginActionMedium,
 		FExecuteAction::CreateRaw(this, &FAutoLightmapAdjusterModule::generateMedium),
 		FCanExecuteAction());
 
 	PluginCommandsHigh = MakeShareable(new FUICommandList);
-
 	PluginCommandsHigh->MapAction(
 		FAutoLightmapAdjusterCommands::Get().PluginActionHigh,
 		FExecuteAction::CreateRaw(this, &FAutoLightmapAdjusterModule::generateHigh),
@@ -51,21 +43,18 @@ void FAutoLightmapAdjusterModule::StartupModule()
 	{
 		TSharedPtr<FExtender> MenuExtender = MakeShareable(new FExtender());
 		MenuExtender->AddMenuExtension("WindowLayout", EExtensionHook::After, PluginCommandsLow, FMenuExtensionDelegate::CreateRaw(this, &FAutoLightmapAdjusterModule::AddMenuLowExtension));
-
 		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(MenuExtender);
 	}
 
 	{
 		TSharedPtr<FExtender> MenuExtender = MakeShareable(new FExtender());
 		MenuExtender->AddMenuExtension("WindowLayout", EExtensionHook::After, PluginCommandsMedium, FMenuExtensionDelegate::CreateRaw(this, &FAutoLightmapAdjusterModule::AddMenuMediumExtension));
-
 		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(MenuExtender);
 	}
 
 	{
 		TSharedPtr<FExtender> MenuExtender = MakeShareable(new FExtender());
 		MenuExtender->AddMenuExtension("WindowLayout", EExtensionHook::After, PluginCommandsHigh, FMenuExtensionDelegate::CreateRaw(this, &FAutoLightmapAdjusterModule::AddMenuHighExtension));
-
 		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(MenuExtender);
 	}
 
@@ -84,12 +73,13 @@ void FAutoLightmapAdjusterModule::generateLow()
 	for (TObjectIterator<UStaticMeshComponent> Itr; Itr; ++Itr)
 	{
 		UStaticMeshComponent *component = *Itr;
-		int adjustedComponentSize = component->CalcBounds(component->GetComponentTransform()).SphereRadius;
+		float adjustedComponentSize = component->CalcBounds(component->GetComponentTransform()).BoxExtent.Size();
 		component->bOverrideLightMapRes = true;
-		component->OverriddenLightMapRes = adjustedComponentSize*0.25;
+		float scaleCalculation = 1024.0 / (adjustedComponentSize*0.05);
+		int32 IntNumb = (int32)scaleCalculation;
+		component->OverriddenLightMapRes = FMath::Clamp(IntNumb, 4, 64);
 		FAutoLightmapAdjusterCommands::Register();
 	}
-
 }
 
 void FAutoLightmapAdjusterModule::generateMedium()
@@ -97,12 +87,13 @@ void FAutoLightmapAdjusterModule::generateMedium()
 	for (TObjectIterator<UStaticMeshComponent> Itr; Itr; ++Itr)
 	{
 		UStaticMeshComponent *component = *Itr;
-		int adjustedComponentSize = component->CalcBounds(component->GetComponentTransform()).SphereRadius;
+		float adjustedComponentSize = component->CalcBounds(component->GetComponentTransform()).BoxExtent.Size();
 		component->bOverrideLightMapRes = true;
-		component->OverriddenLightMapRes = adjustedComponentSize*0.5;
+		float scaleCalculation = 2048.0 / (adjustedComponentSize*0.05);
+		int32 IntNumb = (int32)scaleCalculation;
+		component->OverriddenLightMapRes = FMath::Clamp(IntNumb,4, 128) ;
 		FAutoLightmapAdjusterCommands::Register();
 	}
-
 }
 
 void FAutoLightmapAdjusterModule::generateHigh()
@@ -110,12 +101,13 @@ void FAutoLightmapAdjusterModule::generateHigh()
 	for (TObjectIterator<UStaticMeshComponent> Itr; Itr; ++Itr)
 	{
 		UStaticMeshComponent *component = *Itr;
-		int adjustedComponentSize = component->CalcBounds(component->GetComponentTransform()).SphereRadius;
+		float adjustedComponentSize = component->CalcBounds(component->GetComponentTransform()).BoxExtent.Size();
 		component->bOverrideLightMapRes = true;
-		component->OverriddenLightMapRes = adjustedComponentSize*1;
-		FAutoLightmapAdjusterCommands::Register();
+		float scaleCalculation = 4096.0 / (adjustedComponentSize*0.05);
+		int32 IntNumb = (int32)scaleCalculation;
+		component->OverriddenLightMapRes = FMath::Clamp(IntNumb, 4, 256);
+		FAutoLightmapAdjusterCommands::Register(); 
 	}
-
 }
 
 void FAutoLightmapAdjusterModule::AddMenuLowExtension(FMenuBuilder& Builder)

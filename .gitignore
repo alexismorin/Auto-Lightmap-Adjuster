@@ -14,7 +14,6 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
@@ -23,7 +22,6 @@
 *.lai
 *.la
 *.a
-*.lib
 
 # Executables
 *.exe
@@ -46,8 +44,6 @@ SourceArt/**/*.png
 SourceArt/**/*.tga
 
 # Binary Files
-Binaries/*
-Plugins/*/Binaries/*
 
 # Builds
 Build/*
@@ -67,8 +63,7 @@ Build/*/**
 Saved/*
 
 # Compiled source files for the engine to use
-Intermediate/*
-Plugins/*/Intermediate/*
+
 
 # Cache files for the editor to use
 DerivedDataCache/*
@@ -97,7 +92,6 @@ ExportedObj/
 *.pidb
 *.booproj
 *.svd
-*.pdb
 *.opendb
 *.VC.db
 
