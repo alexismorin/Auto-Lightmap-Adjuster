@@ -1,0 +1,12 @@
+{
+    "name": "com.alexismorin.autolightmapadjuster",
+    "displayName": "Auto Lightmap Adjuster",
+    "version": "1.0.0",
+    "unity": "2019.2",
+    "description": "Automatically adjust lightmap scale for all meshes in your scene",
+    "keywords": [
+        "light",
+        "unity"
+    ],
+    "category": "Open-Source"
+}
