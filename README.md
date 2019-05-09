@@ -23,11 +23,11 @@ The package installed, simply navigate to the new *Tools/Adjust Lightmap Scale* 
 
 ![unrealsettings](images/unrealsettings.png)
 
-The package installed, simply navigate to the new *Tools/Adjust Lightmap Scale* menu bar items and select your resolution:
+The plugin installed, simply navigate to the new *Windows/Lightmap Scale* menu bar items and select your resolution:
 
-- *Mobile* is good for preview renders or mobile games (duh).
-- *Desktop and Consoles* is what's going to work best for probably most game or cutscene usecases, it's a good tradeoff between resolution and memory.
-- *Film & TV rendering* is for real-time render stuff or cutscenes - unless you're running an RTX rig you're going to have a bad time having this in a game.
+- *Performance* is good for preview renders or mobile games (duh).
+- *Balanced* is what's going to work best for probably most game or cutscene usecases, it's a good tradeoff between resolution and memory.
+- *Quality* is for real-time render stuff or cutscenes - unless you're running an RTX rig you're going to have a bad time having this in a game.
 
 ![unrealresults](images/unrealresults.png)
 
@@ -46,4 +46,7 @@ This is a plugin that makes use of Unity's *Package Manager* feature. Just drop 
 
 Just drag the *AutoLightmapAdjuster* folder into your project's *Plugins* folder (create it at the same level as your content folder if you don't have one already) and open your project - things should work out by themselves.
 
-Per usual, this was whipped up in around two hours on my couch - bugs beware, tweak or fork as you wish.
+Per usual, this was whipped up in a couple of hours on my couch - bugs beware, tweak or fork as you wish.
+
+### Bugs
+- Unreal will sometimes not refresh the new lightmap sizes; just select all the static meshes in the scene and toggle on and off the override setting - that'll fix it.

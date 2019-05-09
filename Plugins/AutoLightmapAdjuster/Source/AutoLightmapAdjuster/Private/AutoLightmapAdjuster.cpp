@@ -6,6 +6,7 @@
 #include "Misc/MessageDialog.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "EngineUtils.h"
+#include "Object.h"
 
 #include "LevelEditor.h"
 
@@ -22,73 +23,116 @@ void FAutoLightmapAdjusterModule::StartupModule()
 
 	FAutoLightmapAdjusterCommands::Register();
 	
-	PluginCommands = MakeShareable(new FUICommandList);
 
-	PluginCommands->MapAction(
-		FAutoLightmapAdjusterCommands::Get().PluginAction,
-		FExecuteAction::CreateRaw(this, &FAutoLightmapAdjusterModule::PluginButtonClicked),
+
+	PluginCommandsLow = MakeShareable(new FUICommandList);
+
+	PluginCommandsLow->MapAction(
+		FAutoLightmapAdjusterCommands::Get().PluginActionLow,
+		FExecuteAction::CreateRaw(this, &FAutoLightmapAdjusterModule::generateLow),
+		FCanExecuteAction());
+
+	PluginCommandsMedium = MakeShareable(new FUICommandList);
+
+	PluginCommandsMedium->MapAction(
+		FAutoLightmapAdjusterCommands::Get().PluginActionMedium,
+		FExecuteAction::CreateRaw(this, &FAutoLightmapAdjusterModule::generateMedium),
+		FCanExecuteAction());
+
+	PluginCommandsHigh = MakeShareable(new FUICommandList);
+
+	PluginCommandsHigh->MapAction(
+		FAutoLightmapAdjusterCommands::Get().PluginActionHigh,
+		FExecuteAction::CreateRaw(this, &FAutoLightmapAdjusterModule::generateHigh),
 		FCanExecuteAction());
 		
 	FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
 	
 	{
 		TSharedPtr<FExtender> MenuExtender = MakeShareable(new FExtender());
-		MenuExtender->AddMenuExtension("WindowLayout", EExtensionHook::After, PluginCommands, FMenuExtensionDelegate::CreateRaw(this, &FAutoLightmapAdjusterModule::AddMenuExtension));
+		MenuExtender->AddMenuExtension("WindowLayout", EExtensionHook::After, PluginCommandsLow, FMenuExtensionDelegate::CreateRaw(this, &FAutoLightmapAdjusterModule::AddMenuLowExtension));
 
 		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(MenuExtender);
 	}
-	
+
 	{
-		TSharedPtr<FExtender> ToolbarExtender = MakeShareable(new FExtender);
-		ToolbarExtender->AddToolBarExtension("Settings", EExtensionHook::After, PluginCommands, FToolBarExtensionDelegate::CreateRaw(this, &FAutoLightmapAdjusterModule::AddToolbarExtension));
-		
-		LevelEditorModule.GetToolBarExtensibilityManager()->AddExtender(ToolbarExtender);
+		TSharedPtr<FExtender> MenuExtender = MakeShareable(new FExtender());
+		MenuExtender->AddMenuExtension("WindowLayout", EExtensionHook::After, PluginCommandsMedium, FMenuExtensionDelegate::CreateRaw(this, &FAutoLightmapAdjusterModule::AddMenuMediumExtension));
+
+		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(MenuExtender);
 	}
+
+	{
+		TSharedPtr<FExtender> MenuExtender = MakeShareable(new FExtender());
+		MenuExtender->AddMenuExtension("WindowLayout", EExtensionHook::After, PluginCommandsHigh, FMenuExtensionDelegate::CreateRaw(this, &FAutoLightmapAdjusterModule::AddMenuHighExtension));
+
+		LevelEditorModule.GetMenuExtensibilityManager()->AddExtender(MenuExtender);
+	}
+
+	
 }
 
 void FAutoLightmapAdjusterModule::ShutdownModule()
 {
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
 	FAutoLightmapAdjusterStyle::Shutdown();
-
 	FAutoLightmapAdjusterCommands::Unregister();
 }
 
 
-void FAutoLightmapAdjusterModule::PluginButtonClicked()
+void FAutoLightmapAdjusterModule::generateLow()
 {
 	for (TObjectIterator<UStaticMeshComponent> Itr; Itr; ++Itr)
 	{
-		// Access the subclass instance with the * or -> operators.
-		UStaticMeshComponent *Component = *Itr;
-		Component->bOverrideLightMapRes = true;
-		Component->OverriddenLightMapRes = 1024;
-		PostEditChangeProperty();
-	//	FPropertyChangedEvent evt(nullptr);
-	//	Component->PostEditChangeProperty(evt);
-
-	//	UE_LOG(LogTemp, Warning, TEXT(to Component->GetLocalBounds));
+		UStaticMeshComponent *component = *Itr;
+		int adjustedComponentSize = component->CalcBounds(component->GetComponentTransform()).SphereRadius;
+		component->bOverrideLightMapRes = true;
+		component->OverriddenLightMapRes = adjustedComponentSize*0.25;
+		FAutoLightmapAdjusterCommands::Register();
 	}
 
-	// Put your "OnButtonClicked" stuff here
-	//FText DialogText = FText::Format(
-	//						LOCTEXT("PluginButtonDialogText", "Add code to {0} in {1} to override this button's actions"),
-	//						FText::FromString(TEXT("FAutoLightmapAdjusterModule::PluginButtonClicked()")),
-	//						FText::FromString(TEXT("AutoLightmapAdjuster.cpp"))
-	//				   );
-	//FMessageDialog::Open(EAppMsgType::Ok, DialogText);
 }
 
-void FAutoLightmapAdjusterModule::AddMenuExtension(FMenuBuilder& Builder)
+void FAutoLightmapAdjusterModule::generateMedium()
 {
-	Builder.AddMenuEntry(FAutoLightmapAdjusterCommands::Get().PluginAction);
+	for (TObjectIterator<UStaticMeshComponent> Itr; Itr; ++Itr)
+	{
+		UStaticMeshComponent *component = *Itr;
+		int adjustedComponentSize = component->CalcBounds(component->GetComponentTransform()).SphereRadius;
+		component->bOverrideLightMapRes = true;
+		component->OverriddenLightMapRes = adjustedComponentSize*0.5;
+		FAutoLightmapAdjusterCommands::Register();
+	}
+
 }
 
-void FAutoLightmapAdjusterModule::AddToolbarExtension(FToolBarBuilder& Builder)
+void FAutoLightmapAdjusterModule::generateHigh()
 {
-	Builder.AddToolBarButton(FAutoLightmapAdjusterCommands::Get().PluginAction);
+	for (TObjectIterator<UStaticMeshComponent> Itr; Itr; ++Itr)
+	{
+		UStaticMeshComponent *component = *Itr;
+		int adjustedComponentSize = component->CalcBounds(component->GetComponentTransform()).SphereRadius;
+		component->bOverrideLightMapRes = true;
+		component->OverriddenLightMapRes = adjustedComponentSize*1;
+		FAutoLightmapAdjusterCommands::Register();
+	}
+
 }
+
+void FAutoLightmapAdjusterModule::AddMenuLowExtension(FMenuBuilder& Builder)
+{
+	Builder.AddMenuEntry(FAutoLightmapAdjusterCommands::Get().PluginActionLow);
+}
+
+void FAutoLightmapAdjusterModule::AddMenuMediumExtension(FMenuBuilder& Builder)
+{
+	Builder.AddMenuEntry(FAutoLightmapAdjusterCommands::Get().PluginActionMedium);
+}
+
+void FAutoLightmapAdjusterModule::AddMenuHighExtension(FMenuBuilder& Builder)
+{
+	Builder.AddMenuEntry(FAutoLightmapAdjusterCommands::Get().PluginActionHigh);
+}
+
 
 #undef LOCTEXT_NAMESPACE
 	

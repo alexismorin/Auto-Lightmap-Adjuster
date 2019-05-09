@@ -9,22 +9,27 @@ class FToolBarBuilder;
 class FMenuBuilder;
 
 
+
+
 class FAutoLightmapAdjusterModule : public IModuleInterface
 {
 public:
 
-	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 	
-	/** This function will be bound to Command. */
-	void PluginButtonClicked();
+	void generateLow();
+	void generateMedium();
+	void generateHigh();
 	
 private:
 
-	void AddToolbarExtension(FToolBarBuilder& Builder);
-	void AddMenuExtension(FMenuBuilder& Builder);
+	void AddMenuLowExtension(FMenuBuilder& Builder);
+	void AddMenuMediumExtension(FMenuBuilder& Builder);
+	void AddMenuHighExtension(FMenuBuilder& Builder);
 
 private:
-	TSharedPtr<class FUICommandList> PluginCommands;
+	TSharedPtr<class FUICommandList> PluginCommandsLow;
+	TSharedPtr<class FUICommandList> PluginCommandsMedium;
+	TSharedPtr<class FUICommandList> PluginCommandsHigh;
 };

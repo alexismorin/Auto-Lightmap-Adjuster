@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "AutoLightmapAdjuster",
+	"FriendlyName": "Auto Lightmap Adjuster",
 	"Description": "Automatically adjust lightmap scale for static meshes in your scene ",
 	"Category": "Other",
 	"CreatedBy": "Alexis Morin",
